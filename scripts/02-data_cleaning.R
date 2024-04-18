@@ -1,44 +1,47 @@
 #### Preamble ####
-# Purpose: Cleans the raw plane data recorded by two observers..... [...UPDATE THIS...]
-# Author: Rohan Alexander [...UPDATE THIS...]
-# Date: 6 April 2023 [...UPDATE THIS...]
-# Contact: rohan.alexander@utoronto.ca [...UPDATE THIS...]
+# Purpose: Cleans the unnecessary data from raw dataset and rename the selected data
+# Author: Hailey Jang
+# Date: 15 April 2024
+# Contact: hailey.jang@utoronto.ca
 # License: MIT
-# Pre-requisites: [...UPDATE THIS...]
-# Any other information needed? [...UPDATE THIS...]
+# Pre-requisites: -
+# Any other information needed? -
 
 #### Workspace setup ####
 library(tidyverse)
+library(readr)
+library(dplyr)
+
 
 #### Clean data ####
-raw_data <- read_csv("inputs/data/plane_data.csv")
+raw_data <- read_csv("data/raw_data/raw_data.csv")
 
-cleaned_data <-
-  raw_data |>
-  janitor::clean_names() |>
-  select(wing_width_mm, wing_length_mm, flying_time_sec_first_timer) |>
-  filter(wing_width_mm != "caw") |>
-  mutate(
-    flying_time_sec_first_timer = if_else(flying_time_sec_first_timer == "1,35",
-                                   "1.35",
-                                   flying_time_sec_first_timer)
-  ) |>
-  mutate(wing_width_mm = if_else(wing_width_mm == "490",
-                                 "49",
-                                 wing_width_mm)) |>
-  mutate(wing_width_mm = if_else(wing_width_mm == "6",
-                                 "60",
-                                 wing_width_mm)) |>
-  mutate(
-    wing_width_mm = as.numeric(wing_width_mm),
-    wing_length_mm = as.numeric(wing_length_mm),
-    flying_time_sec_first_timer = as.numeric(flying_time_sec_first_timer)
-  ) |>
-  rename(flying_time = flying_time_sec_first_timer,
-         width = wing_width_mm,
-         length = wing_length_mm
-         ) |> 
-  tidyr::drop_na()
+data <- read_csv("data/raw_data/raw_data.csv", col_types = cols(
+  E1006_NAM = col_character(),
+  E2002 = col_double(),
+  E2001_Y = col_double(),
+  E3023 = col_double(),
+  E3007 = col_double(),
+  E3009 = col_double(),
+  E3011 = col_double()
+))
+
+data <- as.data.frame(data)
+
+cleaned_data <- data %>%
+  dplyr::select(E1006_NAM, E2002, E2001_Y, E3023, E3007, E3009, E3011)
+
+# Rename the columns to more descriptive names
+cleaned_data <- cleaned_data %>%
+  rename(
+    Country_Name = E1006_NAM,
+    Gender = E2002,
+    Age = E2001_Y,
+    Satisfaction_With_Democracy = E3023,
+    Economic_Perception = E3011,
+    Corruption_Perception = E3007,
+    Political_Perception = E3009
+  )
 
 #### Save data ####
-write_csv(cleaned_data, "outputs/data/analysis_data.csv")
+write_csv(cleaned_data, "data/analysis_data/analysis_data.csv")
