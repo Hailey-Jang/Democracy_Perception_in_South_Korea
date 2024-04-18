@@ -24,7 +24,7 @@ cleaned_data %>%
 
 # Boxplot for Satisfaction with Democracy
 cleaned_data %>%
-  ggplot(aes(x = "", y = Satisfaction_With_Democracy)) +
+  ggplot(aes(x = "", y = Dissatisfaction_with_democracy)) +
   geom_boxplot(fill = "cyan", color = "black") +
   labs(title = "Boxplot of Satisfaction with Democracy", x = "", y = "Satisfaction Level") +
   theme_minimal()
@@ -34,12 +34,4 @@ cleaned_data %>%
   ggplot(aes(x = as.factor(Gender))) +
   geom_bar(fill = "magenta") +
   labs(title = "Gender Distribution", x = "Gender", y = "Count") +
-  theme_minimal()
-
-# Density Plot for Attitudes About Elites: Important to Seek Compromise
-cleaned_data %>%
-  ggplot(aes(x = Attitudes_About_Elites_Compromise)) +
-  geom_density(fill = "orange", alpha = 0.7) +
-  labs(title = "Density Plot of Attitudes About Elites: Important to Seek Compromise",
-       x = "Attitude Scale", y = "Density") +
   theme_minimal()
