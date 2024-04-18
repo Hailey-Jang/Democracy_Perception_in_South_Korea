@@ -1,14 +1,14 @@
 ---
-title: "My title"
-subtitle: "My subtitle if needed"
+title: "Exploring Democratic Perceptions in South Korea"
+subtitle: "An Analysis of Survey Data in 2016"
 author: 
-  - First author
-  - Another author
-thanks: "Code and data are available at: LINK."
+  - Hailey Jang 
+thanks: "Code and data are available at: https://github.com/Hailey-Jang/How_South_Koreans_View_Democracy.git."
 date: today
 date-format: long
-abstract: "First sentence. Second sentence. Third sentence. Fourth sentence."
+abstract: "This study explores the impact of globalization on democratic values and participation in South Korea by employing a linear regression model to analyze responses from a nationwide questionnaire on citizens' perceptions and engagement. It found that economic disparities and transformative political changes significantly influence citizens’ views on democracy and their participation levels. Through this quantitative analysis, the research uncovers a complex relationship between socio-economic factors and democratic perception, demonstrating how economic inequalities can diminish feelings of representation and reduce democratic participation. These findings underscore the importance of addressing economic and social inequalities to foster a more inclusive and participative democratic environment in South Korea, contributing to our broader understanding of how globalization shapes political systems worldwide."
 format: pdf
+toc: true
 number-sections: true
 bibliography: references.bib
 ---
@@ -20,92 +20,144 @@ bibliography: references.bib
 
 library(tidyverse)
 library(palmerpenguins)
+library(knitr)
+library(kableExtra)
 ```
 
 
 # Introduction
 
-You can and should cross-reference sections and sub-sections. We use @citeR and @rohan.
+In South Korea, a nation where I was born and raised, the rapid and profound impacts of globalization have redefined the socio-economic and political landscape. As democracy inherently upholds the principle of political equality, ensuring that every citizen has a voice in the political discourse, these global forces present significant challenges. South Korea, characterized by swift economic growth and transformative political shifts, provides a critical context for exploring these challenges. These changes impact more than just the economy; they deeply influence the democratic ethos, raising crucial questions about the sustainability of political equality amidst pervasive transformations. Thus, the citizens of South Korea find themselves navigating an altered political and economic terrain, necessitating a critical reevaluation of democratic values in response to these global dynamics.
 
-The remainder of this paper is structured as follows. @sec-data....
+This paper delves into the significant question of how economic disparities and political transformations influence the democratic perceptions of South Korean citizens. By examining how global forces reflect in the populace's political engagement and representational sentiments, this study seeks to enrich our understanding of the contemporary democratic ethos in South Korea. To address these inquiries, this research utilizes data derived from a comprehensive questionnaire distributed to Korean citizens, capturing their perceptions of democracy and their participation in the democratic process. Employing linear regression models, the analysis focuses on identifying and interpreting the relationships between citizens' economic conditions, social contexts, and their democratic engagement. This methodological approach allows for a detailed exploration of how socio-economic factors influence perceptions and behaviours related to democracy in South Korea.
 
+The findings of this study are vital for understanding the current state and future trajectory of democracy in regions undergoing rapid globalization. By highlighting how socio-economic disparities influence democratic engagement, this research offers insights that are crucial for policymakers, scholars, and citizens concerned with fostering a robust democratic society in the face of global changes. This paper is structured to first introduce the broader context and motivation, followed by an explanation of the data and methods used, presentation of the results, and a discussion that places these findings within the larger theoretical and practical frameworks of democracy and globalization.
 
+This paper is structured to first provide a detailed literature review that sets the theoretical framework for understanding the impact of globalization on democratic values. Following this, @sec-data describes the survey design and analytical techniques employed. @sec-result present the analysis results, discuss the findings in the context of existing literature in @sec-discussion, and conclude with implications for policy and suggestions for future research. By offering a comprehensive exploration of how global trends and socio-economic transformations influence democratic perceptions and participation in South Korea, this study contributes valuable insights into the evolving nature of democracy in a globalized world.
 
 # Data {#sec-data}
+This project harnessed the capabilities of the statistical software, `R` [@citeR], throughout its execution. The `tidyverse` [@tidy] package was indispensable for data cleaning and manipulation tasks. The creation of figures and other data visualizations was adeptly handled using `ggplot2` [@ggplot2R], while `knitr` [@knitrR] and `kableExtra` [@kableextra] were utilized for their excellent data presentation features. File path management was conducted with `readr` [@readrR], and `rstanarm` [@rstanarm] was employed for statistical modeling, along with the `palmerpenguins` [@palmerpenguins] for illustrative purposes.
 
-Some of our data is of penguins (@fig-bills), from @palmerpenguins.
+The data used in this study comes from the "Voter Political Consciousness Survey" conducted in South Korea following the 20th presidential election in 2016, under the auspices of The Comparative Study of Electoral Systems (CSES), a collaborative research project among national election studies worldwide. In this questionnaire, voters disclosed their economic and political perceptions. The raw dataset was large and unwieldy, so it was manually cleaned and renamed for readability. Variables were renamed as follows: E1006_NAM for the country name, E2002 for gender, E2001_Y for birth year, E3023 for satisfaction with democracy, E3007 for corruption, E3009 for political perception, and E3011 for economic perception. Unnecessary rows were deleted from the dataset.
 
-```{r}
-#| label: fig-bills
-#| fig-cap: Bills of penguins
-#| echo: false
+## Data Summary
 
-ggplot(penguins, aes(x = island, fill = species)) +
-  geom_bar(alpha = 0.8) +
-  scale_fill_manual(values = c("darkorange","purple","cyan4"),
-                    guide = "none") +
-  theme_minimal() +
-  facet_wrap(~species, ncol = 1) +
-  coord_flip()
-```
-
-Talk more about it.
-
-And also planes (@fig-planes). (You can change the height and width, but don't worry about doing that until you have finished every other aspect of the paper - Quarto will try to make it look nice and the defaults usually work well once you have enough text.)
+As show in @tbl-variables, the dependent variable will be based on the question, "On the whole, are you very satisfied, fairly satisfied, not very satisfied, or not at all satisfied with the way democracy works in South Korea?" The responses are coded on a four-point scale: 1. very satisfied, 2. fairly satisfied, 3. not very satisfied, and 4. not at all satisfied. For the independent variables, key variables on economic satisfaction will include responses to the question, "Would you say that over the past twelve months, the state of the economy in South Korea has gotten much better, gotten somewhat better, stayed about the same, gotten somewhat worse, or gotten much worse?" Answers are coded as 1. Gotten better, 2. stayed the same, 3. gotten worse, 4. don’t know. Additionally, perceptions of corruption will be assessed with the question, "How widespread do you think corruption such as bribe taking is among politicians in South Korea?" Responses are coded as 1. Very widespread, 2. Quite widespread, 3. Not very widespread, 4. It hardly happens at all, 8. Don’t know (Don’t read). Lastly, data on political changes will be obtained from the question regarding the performance of President Geun-hye Park's government: "Now thinking about the performance of the government of Geun-hye Park president in general, how good or bad a job do you think the government of Geun-hye Park president did over the past three years? Has she done a very good job?" Political satisfaction responses are coded as 1. Very good job, 2. Good job, 3. Bad job, 4. Very bad job.
 
 ```{r}
-#| label: fig-planes
-#| fig-cap: Relationship between wing length and width
+#| label: tbl-variables
+#| tbl-cap: Summary of Variables
 #| echo: false
 #| warning: false
-#| message: false
 
-analysis_data <- read_csv(here::here("data/analysis_data/analysis_data.csv"))
+library(knitr)
+library(kableExtra)
 
-analysis_data |> 
-  ggplot(aes(x = width, y = length)) +
-  geom_point(alpha = 0.8) +
-  theme_minimal() +
-  labs(x = "Wing width (mm)",
-       y = "Wing length (mm)")
+# Create the data frame with the variable summary
+variable_summary <- data.frame(
+  Types = c("The dependent variable", "The independent variables", "", ""),
+  Variables = c("Satisfaction_With_Democracy", "Economic_Perception", "Corruption_Perception", "Political_Perception"),
+  Criterion = c(
+    "1. Very satisfied, 2. Fairly satisfied, 3. Not very satisfied, 4. Not at all satisfied",
+    "1. Gotten better, 2. Stayed the same, 3. Gotten worse, 4. Don’t know",
+    "1. Very widespread, 2. Quite widespread, 3. Not very widespread, 4. It hardly happens at all, 8. Don’t know",
+    "1. Very good job, 2. Good job, 3. Bad job, 4. Very bad job"
+  )
+)
+
+kable(variable_summary, booktabs = TRUE, escape = FALSE) %>%
+  kable_styling(bootstrap_options = c("condensed"), full_width = F, position = "left") %>%
+  column_spec(1, width = "3cm") %>%  
+  column_spec(2, width = "5cm") %>% 
+  column_spec(3, width = "7cm")
 ```
 
-Talk way more about it. 
+## Data Analysis
+To further explore the variables, summary statistics will be presented to describe the relationships among them. @fig-gender-perceptions will show how men and women in South Korea perceive the state of the economy, corruption, and political state. @fig-age-perceptions will show how different generational layers in South Korea perceive the state of the economy, corruption, and political state.
 
+In the @fig-gender-perceptions , we have a set of three bar graphs, each representing a different type of perception—Corruption, Economic, and Political. The bars are divided by gender, with one colour representing male respondents (labelled as '1') and another color representing female respondents (labelled as '2'). The y-axis shows the average perception score, which likely corresponds to a survey response scale. Each bar's height indicates the average score for that perception type among the respective gender group. For instance, we can infer from the graph that both genders have similar average scores for corruption perception, while there may be slight differences in economic and political perceptions.
 
+```{r}
+#| label: fig-gender-perceptions
+#| fig-cap: Perceptions by Gender
+#| echo: false
+#| warning: false
+
+# Load necessary libraries
+library(ggplot2)
+library(dplyr)
+library(readr)
+
+# Load the data
+analysis_data <- read_csv("/Users/hailey/Desktop/How_South_Koreans_View_Democracy/data/analysis_data/analysis_data.csv")
+
+# Convert birth year to age since the data is obtained from 2016 (the survey year)
+analysis_data$Age <- 2016 - analysis_data$Age
+
+# Group age into intervals for better visualization
+analysis_data$AgeGroup <- cut(analysis_data$Age, breaks=seq(min(analysis_data$Age), max(analysis_data$Age) + 10, by=10), right=FALSE)
+
+analysis_data_long <- pivot_longer(analysis_data, 
+                                   cols = c("Economic_Perception", "Corruption_Perception", "Political_Perception"), 
+                                   names_to = "Perception_Type", 
+                                   values_to = "Perception_Score")
+
+# Plotting Perceptions by Gender
+ggplot(analysis_data_long, aes(x = factor(Gender), y = Perception_Score, fill = factor(Gender))) +
+  geom_bar(stat = "summary", fun = mean, position = position_dodge()) +
+  facet_wrap(~Perception_Type, scales = "free_y") +
+  labs(x = "Gender", y = "Average Perception Score") +
+  theme_minimal()
+```
+
+In the @fig-age-perceptions, the same three types of perceptions are displayed. This time, however, they are categorized by age group, which are shown on the x-axis and range from [19,29] to [79,89]. These age groups are likely in ten-year increments, reflecting a broad categorization of respondents by age. The bars are colour-coded by age group, with each colour corresponding to a different age bracket. Similar to the first graph, the y-axis shows the average perception score. This graph illustrates how perceptions change across different age groups. For example, we can observe trends such as whether younger or older age groups rate economic, corruption, or political perceptions higher or lower on average, which might indicate generational differences in attitudes towards these issues.
+
+```{r}
+#| label: fig-age-perceptions
+#| fig-cap: Perceptions by Age Group
+#| echo: false
+#| warning: false
+
+# Load necessary libraries
+library(ggplot2)
+library(dplyr)
+library(readr)
+
+# Load the data
+analysis_data <- read_csv("/Users/hailey/Desktop/How_South_Koreans_View_Democracy/data/analysis_data/analysis_data.csv")
+
+# Plotting Perceptions by Age Group
+ggplot(analysis_data_long, aes(x = AgeGroup, y = Perception_Score, fill = AgeGroup)) +
+  geom_bar(stat = "summary", fun = mean, position = position_dodge()) +
+  facet_wrap(~Perception_Type, scales = "free_y") +
+  labs(x = "Age Group", y = "Average Perception Score") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 55, hjust = 1))  # Rotate the x-axis labels
+```
+
+These figures collectively aim to shed light on the distribution of attitudes towards different aspects of democratic society among different demographic groups in South Korea. The variation in average scores across different genders and age groups may suggest underlying social or cultural factors that influence how different groups perceive economic conditions, the prevalence of corruption, and political performance. 
 
 # Model
 
-The goal of our modelling strategy is twofold. Firstly,...
-
-Here we briefly describe the Bayesian analysis model used to investigate... Background details and diagnostics are included in [Appendix -@sec-model-details].
-
 ## Model set-up
 
-Define $y_i$ as the number of seconds that the plane remained aloft. Then $\beta_i$ is the wing width and $\gamma_i$ is the wing length, both measured in millimeters.  
+In the Bayesian linear regression model[@rstanarm], we attempt to predict $Satisfaction\_With\_Democracy$ (the dependent variable, denoted as $y_i$ for each observation $i$) using $Economic\_Perception$, $Corruption\_Perception$, and $Political\_Perception$ as independent variables. The $y_i$ values are assumed to be normally distributed with a mean of $\mu_i$ and a common standard deviation $\sigma$. The mean $\mu_i$ is a linear combination of the independent variables, represented by the equation $\mu_i = \beta_0 + \beta_1 \cdot Economic\_Perception_i + \beta_2 \cdot Corruption\_Perception_i + \beta_3 \cdot Political\_Perception_i$. Here, $\beta_0$ is the intercept, the expected value of $Satisfaction\_With\_Democracy$ when all independent variables are at zero, reflecting a baseline level of satisfaction without the influence of the predictors. The coefficients $\beta_1$, $\beta_2$, and $\beta_3$ are the slopes that measure the expected change in $Satisfaction\_With\_Democracy$ for a one-unit change in their respective independent variables, assuming other variables are held constant. These regression coefficients are assumed to follow normal distributions with means of zero and standard deviations of 2.5, indicating that before observing the data, we believe it is equally likely that the variables could have a positive or negative association with satisfaction, with a moderate level of certainty. The standard deviation $\sigma$ of the dependent variable's distribution captures the variability of $Satisfaction\_With\_Democracy$ around its mean that is not explained by the independent variables. An Exponential prior with a rate of 1 is assigned to $\sigma$, which suggests we expect smaller values of $\sigma$ (indicating less noise) to be more likely than larger ones. This setup of priors and the model framework allow us to incorporate prior beliefs and uncertainties about the parameters, which are then updated with the data to provide a posterior distribution reflecting our updated beliefs.
 
-\begin{align} 
-y_i|\mu_i, \sigma &\sim \mbox{Normal}(\mu_i, \sigma) \\
-\mu_i &= \alpha + \beta_i + \gamma_i\\
-\alpha &\sim \mbox{Normal}(0, 2.5) \\
-\beta &\sim \mbox{Normal}(0, 2.5) \\
-\gamma &\sim \mbox{Normal}(0, 2.5) \\
-\sigma &\sim \mbox{Exponential}(1)
-\end{align}
-
-We run the model in R [@citeR] using the `rstanarm` package of @rstanarm. We use the default priors from `rstanarm`.
+\begin{align*}
+y_i &\sim \text{Normal}(\mu_i, \sigma) \\
+\mu_i &= \beta_0 + \beta_1 x_i \\
+\beta_0 &\sim \text{Normal}(0, 2.5) \\
+\beta_1 &\sim \text{Normal}(0, 2.5) \\
+\sigma &\sim \text{Exponential}(1)
+\end{align*}
 
 
 ### Model justification
 
-We expect a positive relationship between the size of the wings and time spent aloft. In particular...
 
-We can use maths by including latex between dollar signs, for instance $\theta$.
+# Result{#sec-result}
 
-
-# Results
-
-Our results are summarized in @tbl-modelresults.
+By examining the statistical analysis of @tbl-modelresults, we can explore the impact of economic and political changes on the formation of citizens' perceptions. The results of the two models indicate that perceptions of corruption and economics do not significantly influence the formation of perceptions regarding the realization of democracy. However, it was observed that political satisfaction does have a meaningful effect on the formation of democratic realization perceptions. Considering that political perception has a positive relationship with the perception of democratic realization, it can be interpreted that people who perceive a high level of political satisfaction have a positive perception of the realization of democracy.
 
 ```{r}
 #| echo: false
@@ -117,6 +169,8 @@ library(rstanarm)
 
 first_model <-
   readRDS(file = here::here("models/first_model.rds"))
+second_model <-
+  readRDS(file = here::here("models/second_model.rds"))
 ```
 
 ```{r}
@@ -128,94 +182,120 @@ first_model <-
 
 modelsummary::modelsummary(
   list(
-    "First model" = first_model
+    "First model" = first_model,
+    "Second model" = second_model
   ),
   statistic = "mad",
   fmt = 2
 )
 ```
 
+# Discussion{#sec-discussion}
+
+## Democracy Perception by Different Variables {#sec-first-point}
+@fig-economic-perceptions is a scatter plot overlaid with a linear regression trend line, depicting the relationship between Economic Perception and Satisfaction with Democracy. Each dot represents an individual observation from the dataset, with the horizontal axis (x-axis) representing the level of Economic Perception and the vertical axis (y-axis) indicating the level of Satisfaction with Democracy.
+
+The outcome of the graph suggests that there is a positive association between Economic Perception and Satisfaction with Democracy. As Economic Perception increases, so does Satisfaction with Democracy, at least to some extent according to the data points and the upward trend of the regression line. The strength of this association, however, would need to be quantified with a correlation coefficient or by examining the regression coefficients from a statistical model output.
+```{r}
+#| label: fig-economic-perceptions
+#| fig-cap: Democracy Perceptions by Economic Satisfaction
+#| echo: false
+#| warning: false
+
+# Load the necessary libraries
+library(ggplot2)
+library(readr)
+
+analysis_data <- read_csv("/Users/hailey/Desktop/How_South_Koreans_View_Democracy/data/analysis_data/analysis_data.csv")
+
+# Satisfaction_With_Democracy and Economic_Perception
+ggplot(analysis_data, aes(x = Economic_Perception, y = Satisfaction_With_Democracy)) +
+  geom_point(alpha = 0.6) + 
+  geom_smooth(method = "lm", se = FALSE) + 
+  labs(x = "Economic Perception", y = "Satisfaction with Democracy") +
+  theme_minimal()
+```
+
+@fig-Corruption-perceptions shows a negative trend, indicated by the downward-sloping line, suggesting that as negative view of corruption levels in South Korea increases, Satisfaction with Democracy decreases. This outcome is somewhat expected, as higher perceptions of corruption are often associated with lower satisfaction with government institutions and democratic processes. 
+
+```{r}
+#| label: fig-Corruption-perceptions
+#| fig-cap: Democracy Perceptions by Corruption Perception
+#| echo: false
+#| warning: false
+
+ggplot(analysis_data, aes(x = Corruption_Perception, y = Satisfaction_With_Democracy)) +
+  geom_point(alpha = 0.6) + 
+  geom_smooth(method = "lm", se = FALSE) + 
+  labs(x = "Corruption Perception", y = "Satisfaction with Democracy") +
+  theme_minimal()
+```
+
+In contrast, the @fig-political-perceptions depicts a positive relationship between Political Satisfaction and Satisfaction with Democracy, as shown by the upward-sloping line. This suggests that lower levels of Political satisfaction, which may reflect a more favorable view of the political environment or political performance, are associated with increased Satisfaction with Democracy. 
+
+```{r}
+#| label: fig-political-perceptions
+#| fig-cap: Democracy Perceptions by Political Perception
+#| echo: false
+#| warning: false
+
+ggplot(analysis_data, aes(x = Political_Perception, y = Satisfaction_With_Democracy)) +
+  geom_point(alpha = 0.6) + 
+  geom_smooth(method = "lm", se = FALSE) + 
+  labs(x = "Political Perception", y = "Satisfaction with Democracy") +
+  theme_minimal()
+```
+
+## Democracy Perception
+
+```{r}
+#| label: fig-relationship-between-perceptions
+#| fig-cap: Democracy Perceptions by All Factors
+#| echo: false
+#| warning: false
+
+library(ggplot2)
+library(dplyr)
+library(readr)
+
+analysis_data <- read_csv("/Users/hailey/Desktop/How_South_Koreans_View_Democracy/data/analysis_data/analysis_data.csv")
+
+ggplot(analysis_data, aes(x = Economic_Perception, y = Satisfaction_With_Democracy)) +
+  geom_point(aes(color = "Economic_Perception")) +
+  geom_smooth(method = "lm", aes(color = "Economic_Perception"), se = FALSE) +
+  geom_point(aes(x = Political_Perception, color = "Political_Perception")) +
+  geom_smooth(method = "lm", aes(x = Political_Perception, color = "Political_Perception"), se = FALSE) +
+  geom_point(aes(x = Corruption_Perception, color = "Corruption_Perception")) +
+  geom_smooth(method = "lm", aes(x = Corruption_Perception, color = "Corruption_Perception"), se = FALSE) +
+  labs(x = "Perception Score", y = "Satisfaction With Democracy", color = "Perception Type") +
+  scale_color_manual(values = c("blue", "green", "red")) +
+  theme_minimal()
+```
 
 
+## Conclusions
 
-# Discussion
+This research harnessed the analytical power of regression modeling to delve into how perceptions of economic and political shifts influence democratic sensibilities. It unveils a telling paradox: as dissatisfaction with economic and political conditions heightens, so too does the clamor for a more equitable democracy. Conversely, the heightened perception of corruption in Korea tends to dampen democratic sentiment, revealing a widespread disaffection with the governing structures—echoing themes prevalent in much of the current literature. This study's broader significance lies in its nuanced approach, shifting the lens from broad economic trends and institutional stability to the intricate fabric of individual perceptions. By doing so, it offers a granular view of democratic perceptions, tracing the subtle patterns that emerge from the interplay of personal economic and political experiences.
 
-## First discussion point {#sec-first-point}
-
-If my paper were 10 pages, then should be be at least 2.5 pages. The discussion is a chance to show off what you know and what you learnt from all this. 
-
-## Second discussion point
-
-## Third discussion point
-
-## Weaknesses and next steps
-
-Weaknesses and next steps should also be included.
-
-\newpage
+However, this research is not without its limitations. The regression model successfully identified prevailing perceptual trends within the confines of the data but fell short of illuminating the intricate web of interdependencies among these variables. While the study maps out the landscape of tendencies undergirding the three key variables, it stops short of uncovering the deeper, interwoven connections. As such, the path forward for subsequent inquiries is clear: to unearth the elusive threads that bind these insights into a cohesive narrative, furthering our understanding of the forces that shape democratic participation in the face of societal change.
 
 \appendix
 
 # Appendix {-}
 
-
 # Additional data details
+
+Other variables in the primary dataset
+
+
 
 # Model details {#sec-model-details}
 
 ## Posterior predictive check
 
-In @fig-ppcheckandposteriorvsprior-1 we implement a posterior predictive check. This shows...
-
-In @fig-ppcheckandposteriorvsprior-2 we compare the posterior with the prior. This shows... 
-
-```{r}
-#| eval: true
-#| echo: false
-#| message: false
-#| warning: false
-#| label: fig-ppcheckandposteriorvsprior
-#| layout-ncol: 2
-#| fig-cap: "Examining how the model fits, and is affected by, the data"
-#| fig-subcap: ["Posterior prediction check", "Comparing the posterior with the prior"]
-
-pp_check(first_model) +
-  theme_classic() +
-  theme(legend.position = "bottom")
-
-posterior_vs_prior(first_model) +
-  theme_minimal() +
-  scale_color_brewer(palette = "Set1") +
-  theme(legend.position = "bottom") +
-  coord_flip()
-```
-
-## Diagnostics
-
-@fig-stanareyouokay-1 is a trace plot. It shows... This suggests...
-
-@fig-stanareyouokay-2 is a Rhat plot. It shows... This suggests...
-
-```{r}
-#| echo: false
-#| eval: true
-#| message: false
-#| warning: false
-#| label: fig-stanareyouokay
-#| fig-cap: "Checking the convergence of the MCMC algorithm"
-#| fig-subcap: ["Trace plot", "Rhat plot"]
-#| layout-ncol: 2
-
-plot(first_model, "trace")
-
-plot(first_model, "rhat")
-```
-
-
+## Interval
 
 \newpage
 
 
 # References
-
-
