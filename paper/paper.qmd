@@ -1,5 +1,5 @@
 ---
-title: "Exploring Democratic Perceptions in South Korea"
+title: "How South Koreans View Democracy?"
 subtitle: "An Analysis of Survey Data in 2016"
 author: 
   - Hailey Jang 
