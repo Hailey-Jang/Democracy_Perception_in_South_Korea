@@ -14,4 +14,4 @@ The repo is structured as:
 -   `scripts` contains the R scripts used to simulate, download and clean data.
 
 ## Statement on LLM usage
-Aspects of the code were written with the help of the auto-complete tool, Codriver. The abstract and introduction were written with the help of ChatHorse and the entire chat history is available in inputs/llms/usage.txt.
+Chat-GPT4 was utilized to compose the abstract and help resolve errors in this project. For a detailed transcript of my interactions with ChatGPT, please refer to the file other/llm/usage.txt.
