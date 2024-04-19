@@ -2,7 +2,7 @@
 <img src="https://github.com/Hailey-Jang/Democracy_Perception_in_South_Korea/assets/156959498/5dfb567e-0b40-4d1a-b4c7-463cf3751935" width="300" height="300">
 
 ## Overview
-Dive into this repo for a concise exploration of how globalization shapes democratic perception in South Korea. Using linear regression in `R`, I dissect survey data to reveal the impact of economic inequality on democratic participation. The study highlights the urgent need for addressing social disparities to nurture a more robust, inclusive democracy, offering insights with global resonance.
+Dive into this repo for a concise exploration of how globalization shapes democratic perception in South Korea. Using linear regression in `R`, I dissect survey data to reveal the impact of economic and political dissatisfaction on democratic perception. The study highlights the urgent need for addressing social disparities to nurture a more robust, inclusive democracy, offering insights with global resonance.
 
 ## File Structure
 The repo is structured as:
