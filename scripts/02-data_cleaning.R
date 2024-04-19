@@ -11,6 +11,7 @@
 library(tidyverse)
 library(readr)
 library(dplyr)
+library(arrow)
 
 
 #### Clean data ####
@@ -56,4 +57,5 @@ head(filtered_data)
 
 #### Save data ####
 write_csv(filtered_data, "data/analysis_data/analysis_data.csv")
+write_parquet(filtered_data, "data/analysis_data/analysis_data.parquet")
 
